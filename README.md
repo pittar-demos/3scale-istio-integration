@@ -129,6 +129,42 @@ Finally, create a `ServiceMeshMemberRoll` in the `istio-system` namespace that i
 oc apply -f resources/ossm/member-roll-gateway/default-servicemeshmemberroll.yaml -n istio-system
 ```
 
+You're done with Service Mesh for now.
+
+### Configuring the 3Scale Istio Adapter
+
+By enabling the 3Scale Addon when deploying the Service Mesh Control Plane, the 3Scale Istio Adapter will be automatically deployed for you.  All that's left to do is configure it.
+
+First, you will need some information about your 3Scale tenant, specifically:
+* Admin portal URL (e.g https://3scale-admin.apps.<cluster domain>)
+* Admin access token.
+
+To find your access token, login to your Admin tenant and navigate to the "Account Settings" page.
+* In 3Scale 2.9 you can find this by clicking on the "Gear" icon at the top-right of the screen.
+* In 33Scale 2.10, click on the dropdown in the top nav of the screen and select "Account Settings"
+
+The access key will be in large font in the middle of your screen.
+
+Edit the file `handler.yaml` in `/resources/3scale/istio-adapter` and:
+* Update `access_token` to be your actual access token (no quotes)
+* Update `system_url` to the url of your admin portal.
+
+For example, the fields should look something like:
+
+```
+  params:
+    access_token: 3d0dcb02694b494ae0c8f63970e3e513
+    system_url: https://3scale-admin.apps.example.com
+```
+
+Apply this configuration by running:
+
+```
+oc apply -k resources/3scale/istio-adapter
+```
+
+3Scale should now be integrated with OpenShift Service Mesh!
+
 ## 3Scale Adapter
 
 1. When deploying the SMCP, make sure to enable the 3Scale adapter, and change policy and telementry to "Mixer".
@@ -154,9 +190,3 @@ oc patch -n "${BOOKINFO_NS}"  deployment bookstore --patch ''"${patch}"''
 
 
 ```
-
-809ad3bcb6908c86685705a2ac79fe34
-
-e43dfa62c026ab98090665ebe59028c7
-
-46d1cb6778dbc0ce8737d1df112c9835

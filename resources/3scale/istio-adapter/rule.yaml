@@ -1,0 +1,14 @@
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  creationTimestamp: null
+  name: threescale
+spec:
+  actions:
+  - handler: threescale.handler.istio-system
+    instances:
+    - threescale.instance.istio-system
+  match: |-
+    context.reporter.kind == "inbound" &&
+    destination.labels["service-mesh.3scale.net/credentials"] == "threescale" &&
+    destination.labels["service-mesh.3scale.net/authentication-method"] == ""

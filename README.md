@@ -37,7 +37,7 @@ oc new-project 3scale
 4. In the new 3Scale project, including the 3Scale Operator and an `ObjectBucketClaim`:
 
 ```
-
+oc apply -k https://github.com/pittar-demos/3scale-istio-integration/resources/3scale/operator?ref=main
 ```
 
 ## 3Scale Adapter

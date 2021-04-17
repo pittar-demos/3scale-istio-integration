@@ -1,10 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: 3scale
+namespace: openshift-storage
+
+bases:
+  - github.com/redhat-canada-gitops/catalog/openshift-container-storage-operator/overlays/stable-4.6?ref=master
 
 resources:
-  - 3scale-namespace.yaml
-  - 3scale-operatorgroup.yaml
-  - 3scale-subsscription.yaml
-  - bucketclaim.yaml
+  - ocs-namespace.yaml

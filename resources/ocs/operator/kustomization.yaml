@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: openshift-storage
 
 bases:
-  - github.com/redhat-canada-gitops/catalog/openshift-container-storage-noobaa/overlays/default?ref=master
+  - github.com/redhat-canada-gitops/catalog/openshift-container-storage-operator/overlays/stable-4.6?ref=master
 
 resources:
   - ocs-namespace.yaml

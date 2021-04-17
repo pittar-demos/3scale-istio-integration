@@ -3,7 +3,7 @@ kind: APIManager
 metadata:
   name: 3scale
 spec:
-  wildcardDomain: apps.cluster-c902.c902.sandbox1583.opentlc.com
+  wildcardDomain: apps.<cluster domain>
   resourceRequirementsEnabled: false
   system:
     fileStorage:

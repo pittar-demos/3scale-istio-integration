@@ -1,0 +1,11 @@
+export SM_CP_NS=istio-system
+export BOOKINFO_NS=bookstore-istio
+export API_MANAGER_NS=3scale
+export API_TENANT_USERNAME=admin
+export API_TENANT_PASSWORD=
+export API_ADMIN_ACCESS_TOKEN=
+export OCP_USERNAME=opentlc-mgr
+export OCP_PASSWORD=r3dh4t1!
+export OCP_MASTER_URL=https://console-openshift-console.apps.<cluster url>
+export SYSTEM_PROVIDER_URL=https://3scale-admin.apps.<cluster url>
+export HANDLER_NAME=threescale

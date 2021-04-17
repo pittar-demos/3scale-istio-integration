@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: bookstore-istio
+  namespace: bookstore-istio
+spec:
+  gateways:
+    - istio-ingress/default-gateway
+  hosts:
+    - '*'
+  http:
+    - match:
+        - uri:
+            exact: /camel/books
+      route:
+        - destination:
+            host: bookstore
+            port:
+              number: 8080

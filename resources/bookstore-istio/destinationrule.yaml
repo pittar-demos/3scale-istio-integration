@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: bookstore-istio
+  namespace: bookstore-istio
+spec:
+  host: bookstore
+  subsets:
+    - labels:
+        version: v1
+      name: v1

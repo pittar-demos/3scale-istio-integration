@@ -5,3 +5,4 @@ namespace: istio-gateway
 
 resources:
   - istio-gateway-namespace.yaml
+  - default-gateway-gateway.yaml

@@ -2,9 +2,8 @@ apiVersion: apps.3scale.net/v1alpha1
 kind: APIManager
 metadata:
   name: 3scale
-  namespace: 3scale
 spec:
-  wildcardDomain: apps.<cluster domain>
+  wildcardDomain: apps.cluster-c902.c902.sandbox1583.opentlc.com
   resourceRequirementsEnabled: false
   system:
     fileStorage:

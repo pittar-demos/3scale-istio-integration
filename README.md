@@ -1,10 +1,4 @@
-# 3Scale - Advanced Integrations Demo
-
-This demo repo will cover the following topics:
-
-1. 3Scale Integration with Red Hat Single Sign-On
-2. 3Scale with OIDC auth for an API
-3. 3Scale integration with OpenShift Service Mesh (Istio)
+# 3Scale:  OpenShift Service Mesh (Istio) Integration
 
 ## Getting Started
 
@@ -13,7 +7,6 @@ To get started, you will need a few things in place.
 1. An OpenShift 4.6+ cluster.
 2. 3Scale 2.9+ installed in the cluster.
 3. OpenShift ServiceMesh 2.0+ installed in the cluster.
-4. Red Hat Single Sign-On installed in the cluter.
 
 ## Installing Infrastructure
 
@@ -24,10 +17,28 @@ Use whatever method you like to install 3Scale 2.9+ in your cluster.  If you don
 1. Install the OpenShift Container Storage operator, either by using the UI or by running:
 
 ```
-oc apply -k 
+oc apply -k https://github.com/pittar-demos/3scale-istio-integration/resources/ocs/operator?ref=main
 ```
 
+2. Install the Noobaa component of OCS:
 
+```
+oc apply -k https://github.com/pittar-demos/3scale-istio-integration/resources/ocs/noobaa?ref=main
+```
+
+Noobaa will take a few minutes to fully deploy.  When it's done, you will have a new `openshift-storage.noobaa.io` StorageClass available in your cluster.
+
+3. Create a 3Scale project:
+
+```
+oc new-project 3scale
+```
+
+4. In the new 3Scale project, including the 3Scale Operator and an `ObjectBucketClaim`:
+
+```
+
+```
 
 ## 3Scale Adapter
 

@@ -50,26 +50,6 @@ spec:
               name: bookstoredb
         image: quay.io/pittar/fuse-bookstore:latest
         imagePullPolicy: Always
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 20
-          timeoutSeconds: 1
-          periodSeconds: 10
-          successThreshold: 1
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 60
-          timeoutSeconds: 1
-          periodSeconds: 10
-          successThreshold: 1
-          failureThreshold: 3
         resources:
           limits:
             memory: 512Mi

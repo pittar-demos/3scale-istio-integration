@@ -90,9 +90,9 @@ https://3scale-admin.apps.<cluster url>
 
 The admin username is "admin".
 
-## Deploy OpenShift Service Mesh
+### Deploy OpenShift Service Mesh
 
-### Installing the Operators
+#### Installing the Operators
 
 Before installing OpenShift Service Mesh, you first need to install the following operators:
 * [OpenShift Elasticsearch Operator](https://docs.openshift.com/container-platform/4.7/service_mesh/v2x/installing-ossm.html#jaeger-operator-install-elasticsearch_installing-ossm)
@@ -102,7 +102,7 @@ Before installing OpenShift Service Mesh, you first need to install the followin
 Once those are in place, you can install the Service Mesh operator:
 * [OpenShift ServiceMesh Operator](https://docs.openshift.com/container-platform/4.7/service_mesh/v2x/installing-ossm.html#ossm-install-ossm-operator_installing-ossm)
 
-### Creating a Service Mesh Control Plane
+#### Creating a Service Mesh Control Plane
 
 When using OpenShift Service Mesh 2.0, the 3Scale Istio Adapter requires *Mixer*.  Enabling Mixer seems spins up extra components that user more resources than the default `LimitRanges` applied to new projects in an RHPDS cluster.  If you are using RHPDS, you may run into this issue if you use `oc new-projct` to create your istio control plane namespace.  If you use the following instructions, you won't have this issue (creating a `namespace` directly bypasses the new project template).
 
@@ -131,7 +131,7 @@ oc apply -f resources/ossm/member-roll-gateway/default-servicemeshmemberroll.yam
 
 You're done with Service Mesh for now.
 
-### Configuring the 3Scale Istio Adapter
+#### Configuring the 3Scale Istio Adapter
 
 By enabling the 3Scale Addon when deploying the Service Mesh Control Plane, the 3Scale Istio Adapter will be automatically deployed for you.  All that's left to do is configure it.
 
@@ -213,29 +213,88 @@ Finally, create a `VirtualService` to route traffic through the Istio Ingress Ga
 oc apply -f resources/app-istio/virtualservice.yaml -n bookstore
 ```
 
-
-## 3Scale Adapter
-
-1. When deploying the SMCP, make sure to enable the 3Scale adapter, and change policy and telementry to "Mixer".
-    * Addons -> 3Scale -> Install 3Scale Adapter = true
-    * Policy -> Type of Policy -> Mixer
-    * Telemetry -> Type of Telemetry -> Mixer
+You should now be able to hit your API endpoint through the Istio Ingress Gateway instead of it's original (and now deleted) Route.  You can find this url by running the following command:
 
 ```
-patch="$(oc get deployment -n "${BOOKINFO_NS}" bookstore --template='{"spec":{"template":{"metadata":{"labels":{ {{ range $k,$v := .spec.template.metadata.labels }}"{{ $k }}":"{{ $v }}",{{ end }}"service-mesh.3scale.net/service-id":"'"${SERVICE_ID}"'","service-mesh.3scale.net/credentials":"'"${HANDLER_NAME}"'"}}}}}' )"
+echo "Istio Ingress Gateway URL: http://`oc get route -l maistra.io/gateway-name=default-gateway -o go-template='{{range .items}}{{ .spec.host }}{{end}}'`/camel/books"
+```
 
-{"spec":{
-    "template":{
-        "metadata":{
-            "labels":{
-                "app":"bookstore",
-                "deploymentconfig":"bookstore",
-                "service-mesh.3scale.net/credentials":"threescale",
-                "service-mesh.3scale.net/service-id":"3",
-                "version":"v1"
-                }}}}}
+This should confirm that your application is properly configured and working with OpenShift Service Mesh.  If you like, you can also login to Kiali to see the network graph for your application.
 
-oc patch -n "${BOOKINFO_NS}"  deployment bookstore --patch ''"${patch}"''
+## Create a New Product in 3Scale
 
+Finally, it's time to create a new product in 3Scale!
+
+Log back into your 3Scale admin portal.  From the main dashboard:
+
+1. Click **Create Product**.
+2. Give it a name (e.g. Bookstore Istio) and a unique system name and click **Create Product**.
+3. On the next screen, make note of the *Service ID*.  It will be in the bottom-right panel.  It will also be at the end of the current URL in your browser.  In this example, the *Service ID* is **3**.
+
+The next few steps are a work around for a 3Scale bug!  Hopefully this will be resolved soon (still and issue in 3Scale 2.10.0):
+4. Select *any* backend for the app.  It doesn't matter because it won't be used.
+5. Go to *Settings* and select "APIcast 3Scale Managed".  Scroll to the bottom and click **Update Product**.
+6. Click on *Configuration* and promote your product all the way to Prodution.
+7. Click on **Settings** again. This time change the "Deployment" to **Istio**.  Leave authentication as **API Key**.
+6. Click **Update Product**.
+
+Now you need an **Application Plan** and a registered **Application**.
+
+1. From the left nav, select **Applications -> Application Plans**.
+2. Click the green **Create Application Plan** link near the right side of the screen.
+3. Give you plan a Name and System Name (e.g. "Istio Basic" and "istio_basic") and click **Create Application Plan**.
+4. Click the **Publish** link.
+
+Next, sign up for this plan as the default *Developer* account.
+
+1. From the drop down list at the top of the screen, select **Audience**.
+2. Click on the *Developer* account.
+3. Click on the `Application` bread crumb at the top of the screen (it will say `1 Application` if this is a new tenant).
+4. Click the green **Create Application** link near the top-right of the screen.
+5. Select the `Bookstore Istio -> Istio Basic` plan from the drop down.
+6. Give your app a name and description and click **Create Application**
+7. **Take note of your User Key!!**
+
+You now have a new 3Scale product, but there is still some config to do to your application `Deployment` to complete the configuration.
+
+## Add 3Scale Istio Adapter Labels to App Deployment
+
+The final step is to add two new labels to the application `Deployment`.  These are:
 
 ```
+"service-mesh.3scale.net/credentials":"threescale",
+"service-mesh.3scale.net/service-id":"3",
+```
+
+The first label tells the 3Scale Istio Adapter to use the handler named `threescale` for credential requests.  
+
+The second label tells the adapter which 3Scale service this application belongs to.  **The value for the `service-id` label should be the ID of the 3Scale service you just created**.
+
+Update this patch to match the Service ID from your 3Scale service then apply it:
+
+```
+oc patch deployment bookstore -n bookstore \
+    --type "json" \
+    -p '[{"op":"add","path":"/spec/template/metadata/labels/service-mesh.3scale.net~1credentials","value":"threescale"},
+         {"op":"add","path":"/spec/template/metadata/labels/service-mesh.3scale.net~1service-id","value":"3"}]'
+```
+
+This should trigger a rollout of your application.  
+
+## Testing Your Application
+
+Once has finished rolling out, try hitting the same "books" endpoint through the same Istio Ingress Gateway URL again.  If everything is working, you should get the following error:
+
+```
+UNAUTHENTICATED:threescale.handler.istio-system:no auth credentials provided or provided in invalid location
+```
+
+This means 3Scale is protecting your API!  Add the `user_key` parameter to the end of your url:
+
+```
+<endpoint url>?user_key=<your application key>
+```
+
+Now you should be authenticated and getting results!
+
+Your appication is now integrated with OpenShift Service Mesh (Istio) and being managed by 3Scale.

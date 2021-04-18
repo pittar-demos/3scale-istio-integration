@@ -8,5 +8,5 @@ spec:
   connection:
     address: dns:///threescale-istio-adapter:3333
   params:
-    access_token: 3d0dcb02694b494ae0c8f63970e3e513
-    system_url: https://3scale-admin.apps.cluster-c902.c902.sandbox1583.opentlc.com
+    access_token: <your 3scale admin access token>
+    system_url: https://3scale-admin.apps.<cluster domain>

@@ -165,6 +165,21 @@ oc apply -k resources/3scale/istio-adapter
 
 3Scale should now be integrated with OpenShift Service Mesh!
 
+## Deploy an App
+
+First, let's deploy a small app that exposes a simple API and uses the standard OpenShift Router:
+
+```
+oc apply -k resources/app
+```
+
+Once the app is up and running, you can hit the path `https://<route url>/camel/books`.  There should be two entries in the database:
+
+```
+echo "Books endpoint: http://`oc get route -n bookstore bookstore -o go-template='{{ .spec.host }}'`/camel/books"
+```
+
+
 ## 3Scale Adapter
 
 1. When deploying the SMCP, make sure to enable the 3Scale adapter, and change policy and telementry to "Mixer".

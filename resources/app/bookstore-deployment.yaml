@@ -36,6 +36,8 @@ spec:
         env:
         - name: spring_profiles_active
           value: postgresql
+        - name: spring_datasource_initialization-mode
+          value: always
         - name: spring_datasource_username
           valueFrom:
             secretKeyRef:

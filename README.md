@@ -43,7 +43,7 @@ Noobaa will take a few minutes to fully deploy.  When it's done, you will have a
 oc new-project 3scale
 ```
 
-4. In the new 3Scale project, including the 3Scale Operator and an `ObjectBucketClaim`:
+4. In the new 3Scale project, create the 3Scale Operator and an `ObjectBucketClaim`:
 
 ```
 oc apply -k resources/3scale/operator

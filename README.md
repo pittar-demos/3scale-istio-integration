@@ -85,8 +85,7 @@ Once the deployment is complete, you can get the default password for the defaul
 echo "3Scale tenant admin password: `oc get secret -n 3scale system-seed -o go-template='{{ .data.ADMIN_PASSWORD }}' | base64 -d`"
 ```
 
-The admin portal for the 3Scale tenant will be available at:
-https://3scale-admin.apps.<cluster url>
+The admin portal for the 3Scale tenant will be available at: `https://3scale-admin.apps.<cluster domain>`
 
 The admin username is "admin".
 
@@ -104,7 +103,7 @@ Once those are in place, you can install the Service Mesh operator:
 
 #### Creating a Service Mesh Control Plane
 
-When using OpenShift Service Mesh 2.0, the 3Scale Istio Adapter requires *Mixer*.  Enabling Mixer seems spins up extra components that user more resources than the default `LimitRanges` applied to new projects in an RHPDS cluster.  If you are using RHPDS, you may run into this issue if you use `oc new-projct` to create your istio control plane namespace.  If you use the following instructions, you won't have this issue (creating a `namespace` directly bypasses the new project template).
+When using OpenShift Service Mesh 2.0, the 3Scale Istio Adapter requires *Mixer*.  Enabling Mixer seems spins up extra components that use more resources than the default `LimitRanges` applied to new projects in an RHPDS cluster allows.  If you are using RHPDS, you may run into this issue if you use `oc new-projct` to create your Istio control plane namespace.  If you use the following instructions, you won't have this issue (creating a `namespace` directly bypasses the new project template).
 
 Install a `ServiceMeshControlPlane` instance with the following features enabled:
 * 3Scale Istio Adapter Addon
@@ -202,7 +201,7 @@ spec:
 
 ### Adding Service Mesh
 
-Using the first application, first delete the `Route` to the app:
+Using the same application, first delete the `Route` to the app:
 
 ```
 oc delete route bookstore -n bookstore
@@ -224,7 +223,7 @@ oc patch deployment bookstore -n bookstore --patch "$(cat resources/app-istio/is
 oc patch dc bookstoredb -n bookstore --patch "$(cat resources/app-istio/istio-sidecar-patch.yaml)"
 ```
 
-Finally, create a `VirtualService` to route traffic through the Istio Ingress Gateway:
+Finally, create a `VirtualService` to route traffic through the Istio Ingress Gateway to the bookstore app:
 
 ```
 oc apply -f resources/app-istio/virtualservice.yaml -n bookstore

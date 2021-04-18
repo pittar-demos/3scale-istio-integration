@@ -259,7 +259,7 @@ Now you need an **Application Plan** and a registered **Application**.
 
 1. From the left nav, select **Applications -> Application Plans**.
 2. Click the green **Create Application Plan** link near the right side of the screen.
-3. Give you plan a Name and System Name (e.g. "Istio Basic" and "istio_basic") and click **Create Application Plan**.
+3. Give your plan a Name and System Name (e.g. "Istio Basic" and "istio_basic") and click **Create Application Plan**.
 4. Click the **Publish** link.
 
 Next, sign up for this plan as the default *Developer* account.
@@ -279,8 +279,8 @@ You now have a new 3Scale product, but there is still some config to do to your 
 The final step is to add two new labels to the application `Deployment`.  These are:
 
 ```
-"service-mesh.3scale.net/credentials":"threescale",
-"service-mesh.3scale.net/service-id":"3",
+service-mesh.3scale.net/credentials : threescale
+service-mesh.3scale.net/service-id: '3'
 ```
 
 The first label tells the 3Scale Istio Adapter to use the handler named `threescale` for credential requests.  

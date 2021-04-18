@@ -1,0 +1,25 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    app.openshift.io/connects-to: '[{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"bookstoredb"}]'
+    openshift.io/host.generated: "true"
+  labels:
+    app: bookstore
+    app.kubernetes.io/component: bookstore
+    app.kubernetes.io/instance: bookstore
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: bookstore-app
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-8-ubi8
+  name: bookstore
+  namespace: bookstore
+spec:
+  host: bookstore-bookstore.apps.cluster-c902.c902.sandbox1583.opentlc.com
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: bookstore
+    weight: 100
+  wildcardPolicy: None

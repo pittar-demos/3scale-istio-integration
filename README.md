@@ -167,6 +167,8 @@ oc apply -k resources/3scale/istio-adapter
 
 ## Deploy an App
 
+### Basic App Deployment
+
 First, let's deploy a small app that exposes a simple API and uses the standard OpenShift Router:
 
 ```
@@ -177,6 +179,38 @@ Once the app is up and running, you can hit the path `https://<route url>/camel/
 
 ```
 echo "Books endpoint: http://`oc get route -n bookstore bookstore -o go-template='{{ .spec.host }}'`/camel/books"
+```
+
+Now that you know the app works, let's remove the route and use Service Mesh instead.
+
+### Adding Service Mesh
+
+Using the first application, first delete the `Route` to the app:
+
+```
+oc delete route bookstore -n bookstore
+```
+
+Next, patch the `ServiceMeshMemberRoll` to include the `bookstore` namespace:
+
+```
+oc patch servicemeshmemberroll default -n istio-system \
+    --type "json" \
+    -p '[{"op":"add","path":"/spec/members/-","value":"bookstore"}]'
+```
+
+Patch the app `Deployment` and database `DeploymentConfig` with the annotation that will instruct Service Mesh to inject the sidecar.
+
+```
+oc patch deployment bookstore -n bookstore --patch "$(cat resources/app-istio/istio-sidecar-patch.yaml)"
+
+oc patch dc bookstoredb -n bookstore --patch "$(cat resources/app-istio/istio-sidecar-patch.yaml)"
+```
+
+Finally, create a `VirtualService` to route traffic through the Istio Ingress Gateway:
+
+```
+oc apply -f resources/app-istio/virtualservice.yaml -n bookstore
 ```
 
 

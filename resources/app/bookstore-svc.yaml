@@ -3,9 +3,6 @@ kind: Service
 metadata:
   annotations:
     app.openshift.io/connects-to: '[{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"bookstoredb"}]'
-    app.openshift.io/vcs-ref: ""
-    app.openshift.io/vcs-uri: https://github.com/pittar-sandbox/fuse7-lab-openapi-to-java
-    openshift.io/generated-by: OpenShiftWebConsole
   labels:
     app: bookstore
     app.kubernetes.io/component: bookstore
@@ -15,11 +12,10 @@ metadata:
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-ubi8
   name: bookstore
-  namespace: bookstore
 spec:
-  clusterIP: 172.30.196.236
-  clusterIPs:
-  - 172.30.196.236
+  selector:
+    app: bookstore
+    deploymentconfig: bookstore
   ports:
   - appProtocol: http
     name: 8080-tcp
@@ -29,6 +25,3 @@ spec:
     port: 8443
   - name: 8778-tcp
     port: 8778
-  selector:
-    app: bookstore
-    deploymentconfig: bookstore

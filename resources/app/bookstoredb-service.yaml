@@ -5,9 +5,9 @@ metadata:
     template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
   name: bookstoredb
 spec:
+  selector:
+    name: bookstoredb
   ports:
   - appProtocol: tcp
     name: postgresql
     port: 5432
-  selector:
-    name: bookstoredb

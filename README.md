@@ -183,6 +183,23 @@ echo "Books endpoint: http://`oc get route -n bookstore bookstore -o go-template
 
 Now that you know the app works, let's remove the route and use Service Mesh instead.
 
+**Important:** One thing that's easy to overlook is *the configuration of the `ports` of your `Service` is very important when using Istio*!  In order for Istio to select the correct `port` on your `Service` you need to either *prefix the port name with the correct protocol name*, OR *add a `appProtocol` field specifying the protocol*.
+
+I find the `appProtocol` field to be be more obvious and explicit than a naming convention, so that's what I've used.  You can see this by looking at the service object for the [application](https://github.com/pittar-demos/3scale-istio-integration/blob/main/resources/app/bookstore-svc.yaml#L20) and the [database](https://github.com/pittar-demos/3scale-istio-integration/blob/main/resources/app/bookstoredb-service.yaml#L11).
+
+For example:
+
+```
+spec:
+  selector:
+    app: bookstore
+    deploymentconfig: bookstore
+  ports:
+  - appProtocol: http
+    name: 8080-tcp
+    port: 8080
+```
+
 ### Adding Service Mesh
 
 Using the first application, first delete the `Route` to the app:

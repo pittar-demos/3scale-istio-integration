@@ -135,7 +135,7 @@ You're done with Service Mesh for now.
 By enabling the 3Scale Addon when deploying the Service Mesh Control Plane, the 3Scale Istio Adapter will be automatically deployed for you.  All that's left to do is configure it.
 
 First, you will need some information about your 3Scale tenant, specifically:
-* Admin portal URL (e.g https://3scale-admin.apps.<cluster domain>)
+* Admin portal URL (e.g `https://3scale-admin.apps.<cluster domain>`)
 * Admin access token.
 
 To find your access token, login to your Admin tenant and navigate to the "Account Settings" page.

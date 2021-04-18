@@ -248,6 +248,7 @@ Log back into your 3Scale admin portal.  From the main dashboard:
 3. On the next screen, make note of the *Service ID*.  It will be in the bottom-right panel.  It will also be at the end of the current URL in your browser.  In this example, the *Service ID* is **3**.
 
 The next few steps are a work around for a 3Scale bug!  Hopefully this will be resolved soon (still and issue in 3Scale 2.10.0):
+
 4. Select *any* backend for the app.  It doesn't matter because it won't be used.
 5. Go to *Settings* and select "APIcast 3Scale Managed".  Scroll to the bottom and click **Update Product**.
 6. Click on *Configuration* and promote your product all the way to Prodution.
